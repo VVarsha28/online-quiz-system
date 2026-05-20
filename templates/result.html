@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial;
+            text-align: center;
+            background: linear-gradient(to right, #36d1dc, #5b86e5);
+            color: white;
+        }
+
+        .box {
+            background: white;
+            color: black;
+            padding: 30px;
+            margin: 80px auto;
+            width: 400px;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .score {
+            font-size: 22px;
+            margin: 10px 0;
+        }
+
+        .status {
+            font-weight: bold;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .pass {
+            color: green;
+        }
+
+        .fail {
+            color: red;
+        }
+
+        a {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            text-decoration: none;
+            background: #5b86e5;
+            color: white;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            background: #3b5edb;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+
+    <h2>🎉 {{ username }}'s Result</h2>
+
+    <p class="score">Score: {{ score }}</p>
+    <p class="score">Percentage: {{ percentage }}%</p>
+
+    <p class="status 
+        {% if 'Pass' in status %}pass{% else %}fail{% endif %}">
+        {{ status }}
+    </p>
+
+    <br>
+
+    <!-- 🔥 SUBJECT-WISE LEADERBOARD -->
+    <a href="/leaderboard/{{ subject }}">🏆 View {{ subject|upper }} Leaderboard</a>
+
+    <br><br>
+
+    <a href="/">🔄 Play Again</a>
+
+</div>
+
+</body>
+</html>

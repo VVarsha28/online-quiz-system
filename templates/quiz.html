@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial;
+            background: #f5f7fa;
+        }
+
+        .box {
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        /* 🔥 TIMER STYLE */
+        #timer {
+            text-align: center;
+            font-size: 22px;
+            color: red;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .question {
+            display: none;
+            font-size: 18px;
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* 🔥 Bigger Question Text */
+        .question p {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        /* 🔥 Bigger Options */
+        input[type="radio"] {
+            transform: scale(1.3);
+            margin-right: 10px;
+        }
+
+        .option {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+
+<h2>{{ subject|upper }} Quiz</h2>
+
+<!-- 🔥 TIMER -->
+<h3 id="timer">⏱ Time Left: 15s</h3>
+
+<form method="POST" action="/submit">
+
+{% for q in questions %}
+<div class="question {% if loop.first %}active{% endif %}">
+
+    <p>{{ loop.index }}. {{ q[1] }}</p>
+
+    <div class="option">
+        <input type="radio" name="q{{ loop.index }}" value="1">
+        {{ q[2] }}
+    </div>
+
+    <div class="option">
+        <input type="radio" name="q{{ loop.index }}" value="2">
+        {{ q[3] }}
+    </div>
+
+    {% if not loop.first %}
+        <button type="button" onclick="prevQuestion()">Previous</button>
+    {% endif %}
+
+    {% if not loop.last %}
+        <button type="button" onclick="nextQuestion({{ loop.index-1 }})">Next</button>
+    {% else %}
+        <button type="submit">Submit</button>
+    {% endif %}
+
+</div>
+{% endfor %}
+
+</form>
+
+</div>
+
+<script>
+let current = 0;
+const questions = document.querySelectorAll(".question");
+
+let timeLeft = 15;
+let timer;
+
+// Show question
+function showQuestion(index) {
+    questions.forEach(q => q.classList.remove("active"));
+    questions[index].classList.add("active");
+    resetTimer();
+}
+
+// Start timer
+function startTimer() {
+    timer = setInterval(() => {
+        document.getElementById("timer").innerText = "⏱ Time Left: " + timeLeft + "s";
+
+        timeLeft--;
+
+        if (timeLeft < 0) {
+            clearInterval(timer);
+
+            // Auto next or submit
+            if (current < questions.length - 1) {
+                current++;
+                showQuestion(current);
+            } else {
+                document.forms[0].submit();
+            }
+        }
+    }, 1000);
+}
+
+// Reset timer
+function resetTimer() {
+    clearInterval(timer);
+    timeLeft = 15;
+    startTimer();
+}
+
+// Next
+function nextQuestion(index) {
+    let selected = document.querySelector(`input[name="q${index+1}"]:checked`);
+
+    if (!selected) {
+        alert("Please select an answer!");
+        return;
+    }
+
+    current++;
+    showQuestion(current);
+}
+
+// Previous
+function prevQuestion() {
+    current--;
+    showQuestion(current);
+}
+
+// Start first question
+window.onload = function() {
+    showQuestion(0);
+};
+</script>
+
+</body>
+</html>
